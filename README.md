@@ -1,0 +1,1 @@
+"Student A (Name/USN): Designed Frontend & Initial Repo. Student B (Name/USN): Configured Backend & handled Git Branching/PRs.
