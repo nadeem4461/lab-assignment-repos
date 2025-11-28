@@ -62,17 +62,13 @@
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>University Feedback Portal</h1>
-        <form id="form">
-            <input id="course" placeholder="Course Name (e.g. DAA)" required>
-            <input id="student" placeholder="Your Name" required>
-            <button type="submit">Submit Feedback</button>
-        </form>
-        <div id="display">
-            </div>
-    </div>
+    <h1>Course Feedback App</h1>
+    <form id="form">
+        <input id="course" placeholder="Course Name" required>
+        <input id="student" placeholder="Student Name" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="display"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
