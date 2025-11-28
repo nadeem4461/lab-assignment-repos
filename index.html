@@ -1,7 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Feedback Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 1.5rem;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #764ba2;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #5b3785;
+        }
+        #display {
+            margin-top: 20px;
+            border-top: 2px solid #eee;
+            padding-top: 10px;
+        }
+        .review-item {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            border-left: 4px solid #764ba2;
+        }
+    </style>
+</head>
 <body>
-    <h1>Course Feeedback App</h1>
+    <h1>Course Feedback App</h1>
     <form id="form">
         <input id="course" placeholder="Course Name" required>
         <input id="student" placeholder="Student Name" required>
@@ -13,38 +74,51 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-        const firebaseConfig = { 
-            // PASTE YOUR FIREBASE CONFIG HERE
-            
-            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
-  apiKey: "AIzaSyAoqUDLJ4Gxzitl57IlMq-wpqez0rfvxzc",
-  authDomain: "vibe-coding-lab.firebaseapp.com",
-  projectId: "vibe-coding-lab",
-  storageBucket: "vibe-coding-lab.firebasestorage.app",
-  messagingSenderId: "812274297812",
-  appId: "1:812274297812:web:fce6df863c4eced3154441",
-  measurementId: "G-W251WLE4XY"
-
+        // --- PASTE YOUR FIREBASE CONFIG KEYS HERE ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
         };
+        // --------------------------------------------
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         document.getElementById('form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            await addDoc(collection(db, "feedback"), {
-                course: document.getElementById('course').value,
-                student: document.getElementById('student').value
-            });
-            alert("Saved!");
-            location.reload(); // Refresh to see data
+            const btn = e.target.querySelector('button');
+            btn.textContent = "Submitting...";
+            
+            try {
+                await addDoc(collection(db, "feedback"), {
+                    course: document.getElementById('course').value,
+                    student: document.getElementById('student').value,
+                    timestamp: new Date()
+                });
+                alert("Feedback Saved Successfully!");
+                location.reload(); 
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Error saving data");
+                btn.textContent = "Submit Feedback";
+            }
         });
 
         async function load() {
             const querySnapshot = await getDocs(collection(db, "feedback"));
+            const display = document.getElementById('display');
+            display.innerHTML = "<h3>Recent Feedback:</h3>";
             querySnapshot.forEach((doc) => {
-                document.getElementById('display').innerHTML += `<p>${doc.data().course} - ${doc.data().student}</p>`;
+                const data = doc.data();
+                display.innerHTML += `
+                    <div class="review-item">
+                        <strong>${data.course}</strong><br>
+                        <small>by ${data.student}</small>
+                    </div>`;
             });
         }
         load();
